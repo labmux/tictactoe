@@ -31,7 +31,7 @@ function isStringOnly ($arr) {
  */
 function isValidInput($arr) {
     foreach ($arr as $value) {
-        if(strcasecmp("x", $value) || strcasecmp("o", $value))
+        if(strcasecmp("x", $value) != 0 || strcasecmp("o", $value) != 0)
         {
             echo "<h1>Invalid input: Must enter X or Y</h1>";
             return false;
@@ -61,7 +61,7 @@ function getAiTurn($arr) {
  */
 function fullGrid($arr) {
     foreach ($arr as $v) {
-        if(empty($y)) return false;
+        if(empty($v)) return false;
     }
     return true;
 }
@@ -122,29 +122,41 @@ function isTie($arr) {
 
 if(!empty($_POST['grid'])) {
     //verify if input is valid
-    //isStringOnly($_POST['grid']) && isValidInput($_POST['grid'])
-    if(!xWon($grid) && !oWon($grid) && !isTie($grid)) {
-
-        //update grid
+    //
+    if(true) {
         $grid = $_POST['grid'];
 
-        $grid[$this.getAiTurn($grid)] = "o";
-        echo "<h1>$randomNum</h1>";
+        if(!xWon($grid) && !oWon($grid) && !isTie($grid)) {
+
+            if(!fullGrid($grid)) {
+                for ($i = 0;$i < count($grid);$i++)
+                {
+                    if(empty($grid[$i])) {
+                        $grid[$i] = $_POST['grid[$i]'];
+
+                    }
+                }
+            }
+        }
+        else {
+            if(xWon($grid))
+                $gameover = "Game Over! X Won the game!";
+            else if(oWon($grid))
+                $gameover = "Game Over! O Won the game!";
+            else if(isTie($grid))
+                $gameover = "Game Over! It's a Draw!";
+        }
     }
     else {
-        if(xWon($grid))
-            $gameover = "Game Over! X Won the game!";
-        else if(oWon($grid))
-            $gameover = "Game Over! O Won the game!";
-        else if(isTie($grid))
-            $gameover = "Game Over! It's a Draw!";
+        echo "Invalid input";
     }
+
 }
 
 echo <<<_END
 <h1>Tic Tac Toe</h1>
 <form action="tictactoe.php" method="post">
-    <input type="text" name="grid[]"  value=""></input>
+    <input type="text" name="grid[]"  value="$grid[0]"></input>
     <input type="text" name="grid[]" value="$grid[1]"></input>
     <input type="text" name="grid[]" value="$grid[2]"></input>
     <br>
