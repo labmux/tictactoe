@@ -172,17 +172,17 @@ _END;
 echo <<<_END
 <h1>Tic Tac Toe</h1>
 <form action="tictactoe.php" method="post">
-    <input type="text" name="grid[]"  value="$grid[0]"></input>
-    <input type="text" name="grid[]" value="$grid[1]"></input>
-    <input type="text" name="grid[]" value="$grid[2]"></input>
+    <input type="text" name="grid[]"  value="$grid[0]">
+    <input type="text" name="grid[]" value="$grid[1]">
+    <input type="text" name="grid[]" value="$grid[2]">
     <br>
-    <input type="text" name="grid[]" value="$grid[3]"></input>
-    <input type="text" name="grid[]" value="$grid[4]"></input>
-    <input type="text" name="grid[]" value="$grid[5]"></input>
+    <input type="text" name="grid[]" value="$grid[3]">
+    <input type="text" name="grid[]" value="$grid[4]">
+    <input type="text" name="grid[]" value="$grid[5]">
     <br>
-    <input type="text" name="grid[]" value="$grid[6]"></input>
-    <input type="text" name="grid[]" value="$grid[7]"></input>
-    <input type="text" name="grid[]" value="$grid[8]"></input>
+    <input type="text" name="grid[]" value="$grid[6]">
+    <input type="text" name="grid[]" value="$grid[7]">
+    <input type="text" name="grid[]" value="$grid[8]">
     <br>
     <button type="submit">Submit</button>
 </form>
