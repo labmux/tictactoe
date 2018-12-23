@@ -52,7 +52,7 @@ function xWon ($arr) {
     //Horizontal
     if(strcasecmp($arr[0], 'x') == 0 && strcasecmp($arr[1],'x') == 0 && strcasecmp($arr[2],'x') == 0)
         return true;
-    else if(strcasecmp($arr[3], 'x') == 0 && strcasecmp($arr[4],'x') == 5 && strcasecmp($arr[5],'x') == 0)
+    else if(strcasecmp($arr[3], 'x') == 0 && strcasecmp($arr[4],'x') == 0 && strcasecmp($arr[5],'x') == 0)
         return true;
     else if(strcasecmp($arr[6], 'x') == 0 && strcasecmp($arr[7],'x') == 0 && strcasecmp($arr[8],'x') == 0)
         return true;
@@ -60,7 +60,7 @@ function xWon ($arr) {
     //Vertical
     if(strcasecmp($arr[0], 'x') == 0 && strcasecmp($arr[3],'x') == 0 && strcasecmp($arr[6],'x') == 0)
         return true;
-    else if(strcasecmp($arr[1], 'x') == 0 && strcasecmp($arr[4],'x') == 5 && strcasecmp($arr[7],'x') == 0)
+    else if(strcasecmp($arr[1], 'x') == 0 && strcasecmp($arr[4],'x') == 0 && strcasecmp($arr[7],'x') == 0)
         return true;
     else if(strcasecmp($arr[2], 'x') == 0 && strcasecmp($arr[5],'x') == 0 && strcasecmp($arr[8],'x') == 0)
         return true;
@@ -81,7 +81,7 @@ function oWon ($arr) {
     //Horizontal
     if(strcasecmp($arr[0], 'o') == 0 && strcasecmp($arr[1],'o') == 0 && strcasecmp($arr[2],'o') == 0)
         return true;
-    else if(strcasecmp($arr[3], 'o') == 0 && strcasecmp($arr[4],'o') == 5 && strcasecmp($arr[5],'o') == 0)
+    else if(strcasecmp($arr[3], 'o') == 0 && strcasecmp($arr[4],'o') == 0 && strcasecmp($arr[5],'o') == 0)
         return true;
     else if(strcasecmp($arr[6], 'o') == 0 && strcasecmp($arr[7],'o') == 0 && strcasecmp($arr[8],'o') == 0)
         return true;
@@ -89,7 +89,7 @@ function oWon ($arr) {
     //Vertical
     if(strcasecmp($arr[0], 'o') == 0 && strcasecmp($arr[3],'o') == 0 && strcasecmp($arr[6],'o') == 0)
         return true;
-    else if(strcasecmp($arr[1], 'o') == 0 && strcasecmp($arr[4],'o') == 5 && strcasecmp($arr[7],'o') == 0)
+    else if(strcasecmp($arr[1], 'o') == 0 && strcasecmp($arr[4],'o') == 0 && strcasecmp($arr[7],'o') == 0)
         return true;
     else if(strcasecmp($arr[2], 'o') == 0 && strcasecmp($arr[5],'o') == 0 && strcasecmp($arr[8],'o') == 0)
         return true;
@@ -115,6 +115,8 @@ function isTie($arr) {
 }
 
 if(!empty($_POST['grid'])) {
+    session_start();
+
     //verify if input is valid
     if(isValidInput($_POST['grid'])) {
         $grid = $_POST['grid'];
@@ -125,11 +127,32 @@ if(!empty($_POST['grid'])) {
         }
         else {
             if(xWon($grid))
+            {
                 $gameover = "Game Over! X Won the game!";
+
+                if(isset($_SESSION['player_wins']))
+                    $_SESSION['player_wins'] += 1;
+                else
+                    $_SESSION['player_wins'] = 1;
+            }
             else if(oWon($grid))
+            {
                 $gameover = "Game Over! O Won the game!";
+
+                if(isset($_SESSION['player_losses']))
+                    $_SESSION['player_losses'] += 1;
+                else
+                    $_SESSION['player_losses'] = 1;
+            }
             else if(isTie($grid))
+            {
                 $gameover = "Game Over! It's a Draw!";
+
+                if(isset($_SESSION['player_ties']))
+                    $_SESSION['player_ties'] += 1;
+                else
+                    $_SESSION['player_ties'] = 1;
+            }
         }
     }
     else {
