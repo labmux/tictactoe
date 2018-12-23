@@ -7,37 +7,19 @@
  */
 
 /**
- * Verifies that every element of the array is a string
- * @param $arr
- * @return bool
- */
-function isStringOnly ($arr) {
-    foreach ($arr as $value) {
-        if(!is_string($value))
-        {
-            echo "<h1>Invalid input: Must enter String</h1>";
-            return false;
-        }
-        else
-            continue;
-    }
-    return true;
-}
-
-/**
  * Verifies that user inputed valid input ie. X or O
  * @param $arr
  * @return bool
  */
 function isValidInput($arr) {
     foreach ($arr as $value) {
-        if(strcasecmp("x", $value) != 0 || strcasecmp("o", $value) != 0)
+        if(strcasecmp("x", $value) == 0 || strcasecmp("o", $value) == 0 || $value == "")
         {
-            echo "<h1>Invalid input: Must enter X or Y</h1>";
-            return false;
+            continue;
         }
         else
-            continue;
+            echo "<h1>Invalid input: Must enter X or Y</h1>";
+            return false;
     }
     return true;
 }
@@ -83,6 +65,12 @@ function xWon ($arr) {
     else if(strcasecmp($arr[2], 'x') == 0 && strcasecmp($arr[5],'x') == 0 && strcasecmp($arr[8],'x') == 0)
         return true;
 
+    //Diagonal
+    if(strcasecmp($arr[0], 'x') == 0 && strcasecmp($arr[4],'x') == 0 && strcasecmp($arr[8],'x') == 0)
+        return true;
+    else if(strcasecmp($arr[3], 'x') == 0 && strcasecmp($arr[4],'x') == 5 && strcasecmp($arr[6],'x') == 0)
+        return true;
+
     //Not Equal
     else
         return false;
@@ -106,6 +94,12 @@ function oWon ($arr) {
     else if(strcasecmp($arr[2], 'o') == 0 && strcasecmp($arr[5],'o') == 0 && strcasecmp($arr[8],'o') == 0)
         return true;
 
+    //Diagonal
+    if(strcasecmp($arr[0], 'o') == 0 && strcasecmp($arr[4],'o') == 0 && strcasecmp($arr[8],'o') == 0)
+        return true;
+    else if(strcasecmp($arr[3], 'o') == 0 && strcasecmp($arr[4],'o') == 5 && strcasecmp($arr[6],'o') == 0)
+        return true;
+
     //Not Equal
     else
         return false;
@@ -122,21 +116,12 @@ function isTie($arr) {
 
 if(!empty($_POST['grid'])) {
     //verify if input is valid
-    //
-    if(true) {
+    if(isValidInput($_POST['grid'])) {
         $grid = $_POST['grid'];
 
         if(!xWon($grid) && !oWon($grid) && !isTie($grid)) {
+            $grid[getAiTurn($grid)] = 'o';
 
-            if(!fullGrid($grid)) {
-                for ($i = 0;$i < count($grid);$i++)
-                {
-                    if(empty($grid[$i])) {
-                        $grid[$i] = $_POST['grid[$i]'];
-
-                    }
-                }
-            }
         }
         else {
             if(xWon($grid))
@@ -152,6 +137,14 @@ if(!empty($_POST['grid'])) {
     }
 
 }
+echo <<<_END
+<html>
+<body>
+
+</body>
+</html>
+_END;
+
 
 echo <<<_END
 <h1>Tic Tac Toe</h1>
