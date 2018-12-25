@@ -113,70 +113,80 @@ function isTie($arr) {
     else
         return false;
 }
-function updateGrid(&$arr) {
-    foreach ($arr as $value => $key) {
-        if(isset($value)) {
-            if(!isset($_SESSION['grid[$key]']))
-                $_SESSION['grid[$key'] = $value;
-            else "Cant overrite values";
-        }
-    }
-    $arr = $_SESSION['grid'];
+
+function gameLost($arr) {
+    if(xWon($arr) || oWon($arr) || isTie($arr))
+        return true;
+    else
+        return false;
 }
 
-//if(!isset($_SESSION['grid']) && !isset($_SESSION['player_wins']) && !isset($_SESSION['player_losses']) && !isset($_SESSION['player_ties'])) {
-//    session_start();
-//
-//    echo "Sessions not set";
-//    $_SESSION['grid'] = $_POST['grid'];
-//    $_SESSION['player_losses'] = 0;
-//    $_SESSION['player_wins'] = 0;
-//    $_SESSION['player_ties'] = 0;
-//}
-if(true) {
-    session_start();
+session_start();
 
-    if (!empty($_POST['grid'])) {
-        //verify if input is valid
-        if (isValidInput($_POST['grid'])) {
-            $grid = $_POST['grid'];
-            updateGrid($grid);
+if (!empty($_POST['grid'])) {
+    //verify if input is valid
+    if (isValidInput($_POST['grid'])) {
+        $grid = $_POST['grid'];
 
-            //verify if game is won
-            if (!xWon($grid) && !oWon($grid) && !isTie($grid)) {
-                $grid[getAiTurn($grid)] = 'o';
-                updateGrid($grid);
+
+        //verify if game has not yet been won
+        if (!gameLost($grid))
+            $grid[getAiTurn($grid)] = 'o';
+
+        //if game is won
+        else {
+            if (xWon($grid))
+            {
+                $gameover = "Game Over! X Won the game!";
+
+                if (isset($_SESSION['player_wins']))
+                    $_SESSION['game_wins'] += 1;
+                else
+                    $_SESSION['game_wins'] = 1;
             }
-            else {
-                if (xWon($grid)) {
-                    $gameover = "Game Over! X Won the game!";
+            else if (oWon($grid))
+            {
+                $gameover = "Game Over! O Won the game!";
 
-                    if (isset($_SESSION['player_wins']))
-                        $_SESSION['player_wins'] += 1;
-                    else
-                        $_SESSION['player_wins'] = 1;
-                } else if (oWon($grid)) {
-                    $gameover = "Game Over! O Won the game!";
-
-                    if (isset($_SESSION['player_losses']))
-                        $_SESSION['player_losses'] += 1;
-                    else
-                        $_SESSION['player_losses'] = 1;
-                } else if (isTie($grid)) {
-                    $gameover = "Game Over! It's a Draw!";
-
-                    if (isset($_SESSION['player_ties']))
-                        $_SESSION['player_ties'] += 1;
-                    else
-                        $_SESSION['player_ties'] = 1;
-                }
+                if (isset($_SESSION['player_losses']))
+                    $_SESSION['game_losses'] += 1;
+                else
+                    $_SESSION['game_losses'] = 1;
             }
-        } else {
-            echo "Invalid input";
+            else if (isTie($grid))
+            {
+                $gameover = "Game Over! It's a Draw!";
+
+                if (isset($_SESSION['player_ties']))
+                    $_SESSION['game_ties'] += 1;
+                else
+                    $_SESSION['game_ties'] = 1;
+            }
+
+            $total_games = $_SESSION['game_wins'] + $_SESSION['game_losses'] + $_SESSION['game_ties'];
+
+            //clear grid
+            foreach ($grid as &$value) {
+                $value = "";
+            }
         }
 
+        $score = "Wins: " . $_SESSION['game_wins'] . "<br>"
+        . "Losses: " . $_SESSION['game_losses'] . "<br>"
+        . "Ties: " . $_SESSION['game_ties'] . "<br>"
+        . "-----------------------------" . "<br>"
+        ."<b>Total: </b>" . $total_games;
     }
+    else {
+        echo "Invalid input";
+    }
+
+
 }
+
+
+
+
 
 //header("Location: tttgame.php");
 
@@ -205,6 +215,9 @@ echo <<<_END
         width: 80px;
         height: 40px;
     }
+    .score {
+        float: right;
+    }
 </style>
 </head>
 
@@ -225,7 +238,9 @@ echo <<<_END
     <br>
     <button type="submit">Submit</button>
 </form>
-<h1><?php $gameover ?></h1>
+<h3 class="score">Score</h3>
+<h4 class="score">$score</h4>
+<h1>$gameover</h1>
 
 
 </body>
