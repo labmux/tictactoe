@@ -114,111 +114,93 @@ function isTie($arr) {
         return false;
 }
 
-function gameLost($arr) {
+function gameOver($arr) {
     if(xWon($arr) || oWon($arr) || isTie($arr))
         return true;
     else
         return false;
 }
-
 session_start();
 
-if (!empty($_POST['grid'])) {
-    //verify if input is valid
-    if (isValidInput($_POST['grid'])) {
-        $grid = $_POST['grid'];
+if(isset($_POST['quit']))
+    header("Location: goodbye.php");
 
+else if (isset($_POST['back'])) {
+    header("Location: index.php");
+}
 
-        //verify if game has not yet been won
-        if (!gameLost($grid))
-            $grid[getAiTurn($grid)] = 'o';
+else if(isset($_POST['ai']))
+    $_SESSION['player'] = "ai";
 
-        //if game is won
-        else {
-            if (xWon($grid))
-            {
-                $gameover = "Game Over! X Won the game!";
+else if(isset($_POST['submit'])) {
 
-                if (isset($_SESSION['player_wins']))
-                    $_SESSION['game_wins'] += 1;
-                else
-                    $_SESSION['game_wins'] = 1;
-            }
-            else if (oWon($grid))
-            {
-                $gameover = "Game Over! O Won the game!";
+    //initializes sessions is not set
+    if(!isset($_SESSION['total_games'])) {
 
-                if (isset($_SESSION['player_losses']))
-                    $_SESSION['game_losses'] += 1;
-                else
-                    $_SESSION['game_losses'] = 1;
-            }
-            else if (isTie($grid))
-            {
-                $gameover = "Game Over! It's a Draw!";
+        echo "sess";
+        $_SESSION['game_wins'] = 0;
+        $_SESSION['game_losses'] = 0;
+        $_SESSION['game_ties'] = 0;
+        $_SESSION['total_games'] = 0;
+    }
+    else {
 
-                if (isset($_SESSION['player_ties']))
-                    $_SESSION['game_ties'] += 1;
-                else
-                    $_SESSION['game_ties'] = 1;
-            }
+        if (!empty($_POST['grid'])) {
+            $grid = $_POST['grid'];
 
-            $total_games = $_SESSION['game_wins'] + $_SESSION['game_losses'] + $_SESSION['game_ties'];
+            if (!isValidInput($grid))
+                echo "Invalid input";
 
-            //clear grid
-            foreach ($grid as &$value) {
-                $value = "";
+            //verify if input is valid
+            else {
+
+                //verify if game has not yet been won
+                if (!gameOver($grid)) {
+                    if ($_SESSION['player'] === "ai") {
+                        $grid[getAiTurn($grid)] = 'o';
+                    }
+                }
+                //if game is over
+                else if (gameOver($grid)) {
+                    if (xWon($grid)) {
+                        $gameover = "Game Over! X Won the game!";
+                        $_SESSION['game_wins'] += 1;
+                    }
+                    else if (oWon($grid)) {
+                        $gameover = "Game Over! O Won the game!";
+                        $_SESSION['game_losses'] += 1;
+                    }
+                    else if (isTie($grid)) {
+                        $gameover = "Game Over! It's a Draw!";
+                        $_SESSION['game_ties'] += 1;
+                    }
+
+                    $total_games = $_SESSION['total_games'] = $_SESSION['game_wins'] + $_SESSION['game_losses'] + $_SESSION['game_ties'];
+
+                    echo "<script type='text/javascript'>alert($gameover)</script>";
+
+                    //clear grid
+                    foreach ($grid as &$value) {
+                        $value = "";
+                    }
+                }
             }
         }
 
-        $score = "Wins: " . $_SESSION['game_wins'] . "<br>"
+
+    }
+    $score = "Wins: " . $_SESSION['game_wins'] . "<br>"
         . "Losses: " . $_SESSION['game_losses'] . "<br>"
         . "Ties: " . $_SESSION['game_ties'] . "<br>"
         . "-----------------------------" . "<br>"
-        ."<b>Total: </b>" . $total_games;
-    }
-    else {
-        echo "Invalid input";
-    }
-
-
+        ."<b>Total: </b>" . $_SESSION['total_games'];
 }
-
-
-
-
-
-//header("Location: tttgame.php");
-
 echo <<<_END
 <html>
 <head>
     <title>Tic Tac Toe</title>
-</head>
-
-<style>
-    h1 {
-        text-align: center;
-    }
-    form {
-        text-align: center;
-    }
-    input {
-        width: 80px;
-        height: 80px;
-        text-align: center;
-        font-size: 30px;
-    }
-    button {
-        text-align: center;
-        margin-top: 30px;
-        width: 80px;
-        height: 40px;
-    }
-    .score {
-        float: right;
-    }
-</style>
+    
+    <link rel="stylesheet" href="style.css"
 </head>
 
 <body>
@@ -236,7 +218,9 @@ echo <<<_END
     <input type="text" name="grid[]" value="$grid[7]">
     <input type="text" name="grid[]" value="$grid[8]">
     <br>
-    <button type="submit">Submit</button>
+    <input type="submit" name="submit"  value="Submit" class="ttt">
+    <input type="submit" name="back" value="Go back" class="ttt">
+    
 </form>
 <h3 class="score">Score</h3>
 <h4 class="score">$score</h4>

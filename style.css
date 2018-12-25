@@ -1,4 +1,4 @@
-h1 {
+h1, h3 {
     text-align: center;
 }
 form {
@@ -10,9 +10,17 @@ input {
     text-align: center;
     font-size: 30px;
 }
-button {
+
+.mainmenu {
+    width: 100px;
+}
+
+input.ttt {
     text-align: center;
     margin-top: 30px;
-    width: 80px;
-    height: 40px;
+    width: 150px;
+    height: 60px;
+}
+.score {
+    float: right;
 }
